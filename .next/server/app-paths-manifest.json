@@ -1,0 +1,6 @@
+{
+  "/dashboard/gratificacoes/page": "app/dashboard/gratificacoes/page.js",
+  "/dashboard/historico/page": "app/dashboard/historico/page.js",
+  "/dashboard/funcionarios/page": "app/dashboard/funcionarios/page.js",
+  "/dashboard/admin/page": "app/dashboard/admin/page.js"
+}
