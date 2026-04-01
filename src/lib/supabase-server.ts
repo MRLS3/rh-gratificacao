@@ -8,11 +8,11 @@ export function createServerSupabaseClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name) { return cookieStore.get(name)?.value; },
-        set(name, value, options) {
+        get(name: string) { return cookieStore.get(name)?.value; },
+        set(name: string, value: string, options: Record<string, unknown>) {
           try { cookieStore.set({ name, value, ...options }); } catch {}
         },
-        remove(name, options) {
+        remove(name: string, options: Record<string, unknown>) {
           try { cookieStore.set({ name, value: '', ...options }); } catch {}
         },
       },
