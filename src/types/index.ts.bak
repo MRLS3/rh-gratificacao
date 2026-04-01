@@ -1,18 +1,9 @@
-export interface Permissoes {
-  emitir_gratificacoes: boolean;
-  ver_historico: boolean;
-  cadastrar_funcionarios: boolean;
-  baixar_pdf: boolean;
-  excluir_historico: boolean;
-}
-
 export interface Profile {
   id: string;
   nome: string;
   email: string;
   role: 'admin' | 'operador';
   ativo: boolean;
-  permissoes: Permissoes;
   created_at: string;
   updated_at: string;
 }
