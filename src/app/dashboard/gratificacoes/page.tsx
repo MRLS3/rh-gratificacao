@@ -39,15 +39,15 @@ export default function GratificacoesPage() {
   const [erro, setErro]                   = useState('');
 
   useEffect(() => {
-    sb.from('funcionarios').select('*').eq('ativo', true).order('nome')
+    sb.from('funcionarios_bravo').select('*').eq('ativo', true).order('nome_completo')
       .then(({ data }) => setFuncionarios(data ?? []));
-    // Pré-preenche data de hoje
+    // PrÃ©-preenche data de hoje
     const hoje = new Date();
     const dd = String(hoje.getDate()).padStart(2,'0');
     const mm = String(hoje.getMonth()+1).padStart(2,'0');
     const aaaa = String(hoje.getFullYear());
     setDataRaw(dd+mm+aaaa);
-    // Pré-preenche ref atual
+    // PrÃ©-preenche ref atual
     setRef(`${mm}/${aaaa}`);
   }, []);
 
@@ -68,7 +68,7 @@ export default function GratificacoesPage() {
   }
 
   function handleValorInput(id: string, raw: string) {
-    // Aceita só números
+    // Aceita sÃ³ nÃºmeros
     const nums = raw.replace(/\D/g, '');
     if (!nums) { setLinha(id, { valorRaw: '' }); return; }
     const cents = parseInt(nums);
@@ -82,7 +82,7 @@ export default function GratificacoesPage() {
   const dataISO     = formatarDataISO(dataRaw);
 
   async function gerarPDF(recibos: any[]) {
-    // Import dinâmico para evitar SSR issues
+    // Import dinÃ¢mico para evitar SSR issues
     const { gerarPDFGratificacoes } = await import('@/lib/pdf');
     await gerarPDFGratificacoes(recibos);
   }
@@ -90,12 +90,12 @@ export default function GratificacoesPage() {
   async function handleGerar() {
     setErro(''); setSucesso('');
 
-    // Validações
+    // ValidaÃ§Ãµes
     if (!ref.trim()) { setErro('Preencha o campo Ref (MM/AAAA).'); return; }
-    if (!dataISO)    { setErro('Data inválida.'); return; }
+    if (!dataISO)    { setErro('Data invÃ¡lida.'); return; }
 
     const linhasValidas = linhas.filter(l => l.funcionarioId && l.valorRaw);
-    if (linhasValidas.length === 0) { setErro('Adicione pelo menos um funcionário com valor.'); return; }
+    if (linhasValidas.length === 0) { setErro('Adicione pelo menos um funcionÃ¡rio com valor.'); return; }
 
     setSalvando(true);
 
@@ -126,7 +126,7 @@ export default function GratificacoesPage() {
       const func = funcionarios.find(f => f.id === l.funcionarioId);
       return {
         ref: ref.trim(),
-        funcionarioNome: func?.nome ?? '',
+        funcionarioNome: func?.nome_completo ?? '',
         valor: parseMoeda(l.valorRaw),
         discriminacao: l.discriminar ? l.discriminacao : undefined,
         observacao: l.usarObs ? l.observacao : undefined,
@@ -136,7 +136,7 @@ export default function GratificacoesPage() {
 
     await gerarPDF(recibos);
 
-    setSucesso(`${linhasValidas.length} gratificação(ões) gerada(s) com sucesso!`);
+    setSucesso(`${linhasValidas.length} gratificaÃ§Ã£o(Ãµes) gerada(s) com sucesso!`);
     setSalvando(false);
 
     // Resetar linhas mas manter ref e data
@@ -152,15 +152,15 @@ export default function GratificacoesPage() {
   return (
     <div className="p-8 max-w-4xl">
       <div className="mb-8">
-        <h1 className="font-display text-2xl font-bold text-gray-900">Emitir Gratificações</h1>
-        <p className="text-gray-500 text-sm mt-1">Preencha e gere os recibos do mês</p>
+        <h1 className="font-display text-2xl font-bold text-gray-900">Emitir GratificaÃ§Ãµes</h1>
+        <p className="text-gray-500 text-sm mt-1">Preencha e gere os recibos do mÃªs</p>
       </div>
 
-      {/* Cabeçalho do lote */}
+      {/* CabeÃ§alho do lote */}
       <div className="card p-6 mb-6">
         <h2 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
           <span className="w-6 h-6 bg-forest-700 text-white rounded-full text-xs flex items-center justify-center font-bold">1</span>
-          Referência do lote
+          ReferÃªncia do lote
         </h2>
         <div className="flex gap-4 items-end flex-wrap">
           <div>
@@ -180,17 +180,17 @@ export default function GratificacoesPage() {
                   onClick={() => setRefLocked(false)}
                   className="text-xs text-forest-600 hover:underline"
                 >
-                  ✏️ Alterar
+                  âœï¸ Alterar
                 </button>
               )}
             </div>
             {refLocked && (
-              <p className="text-xs text-forest-600 mt-1 font-medium">🔒 Ref fixada para o lote</p>
+              <p className="text-xs text-forest-600 mt-1 font-medium">ðŸ”’ Ref fixada para o lote</p>
             )}
           </div>
 
           <div>
-            <label className="label">Data de emissão (DDMMAAAA)</label>
+            <label className="label">Data de emissÃ£o (DDMMAAAA)</label>
             <input
               className="input w-40"
               placeholder="24032026"
@@ -205,11 +205,11 @@ export default function GratificacoesPage() {
         </div>
       </div>
 
-      {/* Linhas de funcionários */}
+      {/* Linhas de funcionÃ¡rios */}
       <div className="card p-6 mb-6">
         <h2 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
           <span className="w-6 h-6 bg-forest-700 text-white rounded-full text-xs flex items-center justify-center font-bold">2</span>
-          Funcionários e valores
+          FuncionÃ¡rios e valores
         </h2>
 
         <div className="space-y-4">
@@ -231,7 +231,7 @@ export default function GratificacoesPage() {
           className="btn-secondary mt-4 text-sm"
           onClick={adicionarLinha}
         >
-          + Adicionar funcionário
+          + Adicionar funcionÃ¡rio
         </button>
       </div>
 
@@ -243,7 +243,7 @@ export default function GratificacoesPage() {
       )}
       {sucesso && (
         <div className="bg-forest-50 border border-forest-200 rounded-xl px-5 py-3 text-forest-700 text-sm mb-4">
-          ✅ {sucesso}
+          âœ… {sucesso}
         </div>
       )}
 
@@ -253,14 +253,14 @@ export default function GratificacoesPage() {
         onClick={handleGerar}
         disabled={salvando}
       >
-        {salvando ? 'Gerando…' : `🖨️ Gerar PDF (${linhas.filter(l=>l.funcionarioId&&l.valorRaw).length} recibo${linhas.filter(l=>l.funcionarioId&&l.valorRaw).length !== 1 ? 's' : ''})`}
+        {salvando ? 'Gerandoâ€¦' : `ðŸ–¨ï¸ Gerar PDF (${linhas.filter(l=>l.funcionarioId&&l.valorRaw).length} recibo${linhas.filter(l=>l.funcionarioId&&l.valorRaw).length !== 1 ? 's' : ''})`}
       </button>
-      <p className="text-xs text-gray-400 mt-2">O PDF será baixado com 8 recibos por folha A4 (4 linhas × 2 colunas)</p>
+      <p className="text-xs text-gray-400 mt-2">O PDF serÃ¡ baixado com 8 recibos por folha A4 (4 linhas Ã— 2 colunas)</p>
     </div>
   );
 }
 
-// ── Sub-componente: linha de 1 funcionário ──────────────────────────────
+// â”€â”€ Sub-componente: linha de 1 funcionÃ¡rio â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function LinhaFuncionario({
   linha, idx, funcionarios, onChange, onRemove, onValorInput, podRemover
 }: {
@@ -278,21 +278,21 @@ function LinhaFuncionario({
   return (
     <div className="border border-cream-300 rounded-xl p-4 bg-cream-50">
       <div className="flex items-start gap-3 flex-wrap">
-        {/* Índice */}
+        {/* Ãndice */}
         <span className="w-6 h-6 bg-forest-100 text-forest-700 rounded-full text-xs flex items-center
                          justify-center font-bold mt-1 flex-shrink-0">
           {idx + 1}
         </span>
 
-        {/* Funcionário */}
+        {/* FuncionÃ¡rio */}
         <div className="flex-1 min-w-[180px]">
-          <label className="label">Funcionário</label>
+          <label className="label">FuncionÃ¡rio</label>
           <select
             className="input"
             value={linha.funcionarioId}
             onChange={e => onChange({ funcionarioId: e.target.value })}
           >
-            <option value="">Selecione…</option>
+            <option value="">Selecioneâ€¦</option>
             {funcionarios.map(f => (
               <option key={f.id} value={f.id}>{f.nome}</option>
             ))}
@@ -331,7 +331,7 @@ function LinhaFuncionario({
               onChange={e => onChange({ usarObs: e.target.checked })}
               className="w-4 h-4 accent-forest-700"
             />
-            <span className="text-xs font-semibold text-gray-600">Observação</span>
+            <span className="text-xs font-semibold text-gray-600">ObservaÃ§Ã£o</span>
           </label>
         </div>
 
@@ -342,34 +342,34 @@ function LinhaFuncionario({
             className="text-red-400 hover:text-red-600 transition-colors mt-5 text-lg leading-none"
             title="Remover linha"
           >
-            ✕
+            âœ•
           </button>
         )}
       </div>
 
-      {/* Discriminação */}
+      {/* DiscriminaÃ§Ã£o */}
       {linha.discriminar && (
         <div className="mt-3">
-          <label className="label">Discriminação do valor</label>
+          <label className="label">DiscriminaÃ§Ã£o do valor</label>
           <textarea
             className="input min-h-[72px] resize-y"
-            placeholder={"Ex: R$ 500,00 fixo | R$ 300,00 loja | R$ 200,00 almoço"}
+            placeholder={"Ex: R$ 500,00 fixo | R$ 300,00 loja | R$ 200,00 almoÃ§o"}
             value={linha.discriminacao}
             onChange={e => onChange({ discriminacao: e.target.value })}
           />
           <p className="text-xs text-gray-400 mt-1">
-            Um segundo recibo em branco com esta discriminação será gerado para este funcionário.
+            Um segundo recibo em branco com esta discriminaÃ§Ã£o serÃ¡ gerado para este funcionÃ¡rio.
           </p>
         </div>
       )}
 
-      {/* Observação */}
+      {/* ObservaÃ§Ã£o */}
       {linha.usarObs && (
         <div className="mt-3">
-          <label className="label">Observação (aparece no recibo)</label>
+          <label className="label">ObservaÃ§Ã£o (aparece no recibo)</label>
           <textarea
             className="input min-h-[56px] resize-y"
-            placeholder="Ex: Gratificação referente ao mês de março"
+            placeholder="Ex: GratificaÃ§Ã£o referente ao mÃªs de marÃ§o"
             value={linha.observacao}
             onChange={e => onChange({ observacao: e.target.value })}
           />
