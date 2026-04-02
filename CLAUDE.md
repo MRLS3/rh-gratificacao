@@ -1,134 +1,96 @@
-# ERP Gratificação — Contexto do Projeto
+# CLAUDE.md — Projeto RH Gratificação
 
-## O que é esse projeto
-Sistema web administrativo para emissão de gratificações mensais para funcionários.
-Módulo inicial de um ERP administrativo mais completo.
+## Visão Geral
+Sistema ERP interno para emissão e gestão de recibos de gratificação de funcionários.
 
 ## Stack
-- **Frontend**: Next.js 14 (App Router) + React 18 + TypeScript
-- **Estilos**: Tailwind CSS
-- **Banco de dados**: Supabase (PostgreSQL)
-- **Autenticação**: Supabase Auth
-- **PDF**: jsPDF (8 recibos por folha A4 — 4 linhas × 2 colunas)
-- **Deploy futuro**: Vercel
+- **Frontend:** Next.js 14 (App Router) + TypeScript + Tailwind CSS
+- **Backend:** Supabase (PostgreSQL + Auth + RLS)
+- **Deploy:** Vercel (produção)
+- **Repositório:** https://github.com/MRLS3/rh-gratificacao
 
-## Credenciais e configuração
-- Arquivo de ambiente: `.env.local` na raiz do projeto
-- Projeto Supabase: `xcjwylqsdnfrixkmyhdu.supabase.co`
-- Variáveis necessárias:
-  ```
-  NEXT_PUBLIC_SUPABASE_URL=https://xcjwylqsdnfrixkmyhdu.supabase.co
-  NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGci...
-  SUPABASE_SERVICE_ROLE_KEY=eyJhbGci...
-  ```
+## URLs
+- **Produção:** https://rh-gratificacao.vercel.app
+- **Dashboard:** https://rh-gratificacao.vercel.app/dashboard
 
-## Como rodar localmente
-```bash
-cd C:\PROGRAMAS\erp-gratificacao
-npm run dev
-# Acesse http://localhost:3000
+## Estrutura Local
+- **Pasta local:** `C:\Programas\rh-gratificacao`
+- **Branch principal:** `main`
+
+## Banco de Dados — Supabase
+- **Projeto:** rh-gratificacao
+- **Project ID:** qrkyrktali eupountgig
+- **Project URL:** https://qrkyrktali eupountgig.supabase.co
+- **Região:** South America (São Paulo)
+- **Schema:** ver `supabase-schema.sql` na raiz do projeto
+
+### Tabelas principais
+- `profiles` — usuários do sistema (admin/operador)
+- `funcionarios` — cadastro de funcionários
+- `gratificacoes` — recibos emitidos
+
+## Variáveis de Ambiente
+Configuradas na Vercel em Settings → Environment Variables:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Publishable key)
+- `SUPABASE_SERVICE_ROLE_KEY` (Secret key)
+
+Arquivo local: `C:\Programas\rh-gratificacao\.env.local` (não sobe para o GitHub)
+
+## Arquivos Importantes
+| Arquivo | Descrição |
+|---------|-----------|
+| `src/app/page.tsx` | Redireciona direto para `/dashboard` |
+| `src/app/dashboard/layout.tsx` | Layout sem autenticação obrigatória |
+| `src/middleware.ts` | Middleware sem proteção de rotas |
+| `src/lib/supabase.ts` | Client-side Supabase |
+| `src/lib/supabase-server.ts` | Server-side Supabase |
+| `src/lib/pdf.ts` | Geração de PDF dos recibos |
+| `src/lib/utils.ts` | Funções utilitárias (moeda, datas, extenso) |
+| `src/types/index.ts` | Interfaces TypeScript (Profile, Permissoes, Funcionario, Gratificacao) |
+| `tsconfig.json` | target: es2015, noImplicitAny: false |
+| `vercel.json` | framework: nextjs |
+
+## Rotas do Sistema
+| Rota | Descrição |
+|------|-----------|
+| `/` | Redireciona para `/dashboard` |
+| `/login` | Tela de login (desativada temporariamente) |
+| `/dashboard` | Painel com estatísticas |
+| `/dashboard/funcionarios` | Cadastro de funcionários |
+| `/dashboard/gratificacoes` | Emissão de recibos |
+| `/dashboard/historico` | Histórico de gratificações |
+| `/dashboard/admin` | Administração de usuários |
+
+## Histórico de Deploy (01/04/2026)
+
+### Problemas resolvidos
+1. Repositório antigo `vale` deletado e substituído por `rh-gratificacao`
+2. `node_modules` removido do histórico git com `filter-branch`
+3. Branch renomeada de `master` para `main`
+4. Erros de TypeScript corrigidos:
+   - `Permissoes` ausente em `src/types/index.ts`
+   - `target` ausente no `tsconfig.json` (adicionado `es2015`)
+   - `noImplicitAny` desativado no `tsconfig.json`
+   - Tipos explícitos em `supabase-server.ts` e `middleware.ts`
+5. Vercel configurada com `vercel.json` (framework: nextjs)
+6. Autenticação removida temporariamente:
+   - `src/middleware.ts` — retorna `NextResponse.next()` diretamente
+   - `src/app/page.tsx` — redireciona direto para `/dashboard`
+   - `src/app/dashboard/layout.tsx` — sem verificação de sessão
+7. Novo projeto Supabase criado com schema atualizado
+
+## Como fazer deploy de alterações
+```cmd
+cd C:\Programas\rh-gratificacao
+git add .
+git commit -m "descrição da alteração"
+git push origin main
 ```
+A Vercel faz o deploy automaticamente após o push.
 
-## Estrutura de pastas
-```
-src/
-├── app/
-│   ├── login/                  — Tela de login
-│   ├── dashboard/
-│   │   ├── page.tsx            — Painel inicial com estatísticas
-│   │   ├── layout.tsx          — Layout com sidebar
-│   │   ├── gratificacoes/      — ⭐ Módulo principal de emissão
-│   │   ├── funcionarios/       — Cadastro de funcionários
-│   │   ├── historico/          — Histórico, exclusão individual e por lote
-│   │   └── admin/              — Gerenciar usuários e permissões (só admin)
-│   └── api/usuarios/           — API para criar usuários (service role)
-├── components/
-│   └── layout/Sidebar.tsx      — Menu lateral verde escuro
-└── lib/
-    ├── supabase.ts             — Cliente browser
-    ├── supabase-server.ts      — Cliente server (SSR)
-    ├── utils.ts                — Valor por extenso PT-BR, moeda, datas
-    └── pdf.ts                  — Geração de PDF (v2)
-```
-
-## Banco de dados — Tabelas
-- `profiles` — Usuários com campo `permissoes` (JSONB)
-- `funcionarios` — Cadastro de funcionários ativos/inativos
-- `gratificacoes` — Recibos emitidos com histórico completo
-
-## Estrutura de permissões (JSONB no profiles)
-```json
-{
-  "emitir_gratificacoes": true,
-  "ver_historico": true,
-  "cadastrar_funcionarios": true,
-  "baixar_pdf": true,
-  "excluir_historico": false
-}
-```
-- Admins têm todas as permissões automaticamente
-- Ao mudar role para admin/operador, permissões são resetadas para o padrão do perfil
-- O admin pode ajustar permissões individualmente pelo modal "🔑 Permissões"
-
-## Perfis de usuário
-- `admin` — Acesso total, permissões fixas, pode gerenciar usuários
-- `operador` — Permissões configuráveis pelo admin
-
-## Políticas RLS aplicadas
-```sql
--- Funcionários
-funcionarios_auth_write  → ALL para authenticated
-funcionarios_auth_select → SELECT para authenticated
-
--- Gratificações
-gratificacoes_select       → SELECT para authenticated
-gratificacoes_insert       → INSERT para authenticated
-gratificacoes_delete_admin → DELETE só para role = admin
-
--- Profiles
-profiles_auth_select  → SELECT para authenticated
-profiles_update_admin → UPDATE só para role = admin
-```
-
-## Funcionalidades implementadas
-- [x] Login / logout com e-mail e senha
-- [x] Sidebar com navegação por perfil
-- [x] Cadastro, edição, ativação/desativação de funcionários
-- [x] Emissão de gratificações em lote
-- [x] Campo Ref (MM/AAAA) travado durante o lote
-- [x] Valor em moeda → extenso automático em português
-- [x] Checkbox "Discriminar" → campo + recibo extra
-- [x] Checkbox "Observação" → campo opcional
-- [x] Data DDMMAAAA → "Salvador, 24 de março de 2026"
-- [x] PDF com 8 recibos por folha A4
-- [x] Histórico filtrável por período
-- [x] Re-download de PDF de lotes anteriores
-- [x] Exclusão individual de registro (botão aparece no hover)
-- [x] Exclusão de lote inteiro com confirmação
-- [x] Gerenciamento de usuários pelo admin
-- [x] Painel de permissões granulares por usuário
-- [x] Mini-resumo de permissões visível na lista de usuários
-
-## Layout do recibo PDF (v2)
-- Cabeçalho cinza: GRATIFICAÇÃO | Ref | VALOR
-- "Valor" label pequeno + extenso em itálico negrito 9pt
-- Nome em negrito itálico 10pt
-- Data 8.5pt — "Salvador, DD de mês de AAAA"
-- Slip discriminação: retângulo branco com borda + assinatura na base
-
-## Problemas conhecidos e soluções
-| Problema | Solução |
-|---|---|
-| Supabase erro de extensão Chrome | Aba anônima Ctrl+Shift+N |
-| Trigger de profiles não disparou | INSERT manual com UUID |
-| npm não reconhecido | Instalar Node.js LTS |
-| .env.local não existia | `copy .env.local.example .env.local` |
-| .env.local sem nomes de variáveis | Reescrever com formato NOME=valor |
-| Funcionários não salvavam | Política RLS funcionarios_auth_write |
-| Histórico não carregava | Políticas RLS de SELECT em todas as tabelas |
-
-## Próximos módulos planejados (ERP)
-Para adicionar novos módulos:
-1. Criar `src/app/dashboard/novo-modulo/page.tsx`
-2. Adicionar entrada em `src/components/layout/Sidebar.tsx`
-3. Adicionar tabelas no Supabase com políticas RLS
+## Pendências
+- [ ] Configurar RLS no Supabase para as tabelas (funcionarios, gratificacoes)
+- [ ] Testar adição de funcionários com novo banco
+- [ ] Reativar autenticação quando necessário
+- [ ] Trocar chaves antigas do Supabase (expostas acidentalmente em 01/04/2026)
