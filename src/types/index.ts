@@ -19,10 +19,14 @@ export interface Profile {
 
 export interface Funcionario {
   id: string;
-  nome: string;
+  apelido: string;
+  nome_completo: string;
+  chave_pix?: string;
+  telefone?: string;
+  ferias_inicio?: string;
+  ferias_fim?: string;
   ativo: boolean;
-  created_at: string;
-  updated_at: string;
+  criado_em: string;
 }
 
 export interface Gratificacao {
