@@ -35,7 +35,7 @@ export default function FuncionariosPage() {
         <h1 className="font-display text-2xl font-bold text-gray-900">Funcionarios</h1>
         <p className="text-gray-500 text-sm mt-1">
           Cadastro gerenciado pelo Bravo —{' '}
-          <a href="https://bravo.obigben.com.br/rh/funcionarios" target="_blank" rel="noopener noreferrer"
+          <a href="https://bravo.lojabigben.com/funcionarios" target="_blank" rel="noopener noreferrer"
             className="text-forest-600 underline">
             Editar no Bravo
           </a>
